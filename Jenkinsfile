@@ -10,9 +10,10 @@ pipeline {
             steps {
                 sh 'yarn'
                 sh 'yarn pack'
-                sh 'node dist/index.js trace command sleep 1'
-                sh 'node dist/index.js trace command ls -r'
-                sh 'node dist/index.js trace command ls -ee'
+                sh 'node dist/index.js trace command yarn audit --level moderate'
+                sh 'node dist/index.js trace command yarn test'
+                sh 'node dist/index.js trace command yarn lint'
+                sh 'node dist/index.js trace command yarn prettier-check'
             }
         }
     }
