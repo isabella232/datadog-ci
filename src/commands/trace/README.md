@@ -26,6 +26,6 @@ Whatever command comes after `datadog-ci trace command` will be executed as is. 
 
 ### Supported CIs
 
-You may use `trace command` in any CI, but the trace will only be continued in the following supported CIs:
+You may use `trace command` in any CI, but the created span will only be a part of a pipeline trace in the following supported CIs:
 
 - Jenkins. [Datadog Jenkins Plugin](https://docs.datadoghq.com/integrations/jenkins/) v2.4.0 or higher needs to be installed.
