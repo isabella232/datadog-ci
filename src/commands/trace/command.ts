@@ -34,6 +34,8 @@ export class TraceInstructionCommand extends Command {
     const ciMetadata = getCIMetadata()
     let parentSpan
 
+    console.log('ciMetadata', ciMetadata)
+
     if (ciMetadata?.trace) {
       const {
         trace: {parentSpanId, traceId},
