@@ -14,6 +14,7 @@ pipeline {
                 sh 'node dist/index.js trace command yarn test'
                 sh 'node dist/index.js trace command yarn lint'
                 sh 'node dist/index.js trace command yarn prettier-check'
+                sh 'node dist/index.js trace command yarn prettier-check && node dist/index.js trace command yarn lint'
             }
         }
     }
