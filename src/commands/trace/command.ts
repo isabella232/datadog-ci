@@ -4,15 +4,25 @@ import {Command} from 'clipanion'
 import tracer from 'dd-trace'
 
 import {getCIMetadata} from '../../helpers/ci'
-import {CI_PIPELINE_URL, CI_PROVIDER_NAME, GIT_BRANCH, GIT_SHA, PARENT_SPAN_ID, TRACE_ID} from '../../helpers/tags'
+import {
+  CI_PIPELINE_URL,
+  CI_PROVIDER_NAME,
+  GIT_BRANCH,
+  GIT_SHA,
+  PARENT_SPAN_ID,
+  TRACE_ID,
+  ERROR,
+  EXIT_CODE,
+  INSTRUCTION,
+} from '../../helpers/tags'
 
 export class WrapInstructionCommand extends Command {
   public static usage = Command.Usage({
-    description: 'Wrap commands to upload as spans.',
+    description: 'Trace your CI commands.',
     details: `
-            This command will allow you to wrap any command to see its status code.
+            This command will allow you to wrap any instruction and create a span associated to it.
         `,
-    examples: [['Wrap command', 'datadog-ci trace command touch README.md']],
+    examples: [['Wrap command', 'datadog-ci trace command yarn test']],
   })
   private instruction: string[] = []
 
@@ -36,8 +46,10 @@ export class WrapInstructionCommand extends Command {
         }) || undefined
     }
 
+    const instruction = this.instruction.join(' ')
+
     tracer.trace(
-      'datadog-ci',
+      instruction,
       {childOf: parentSpan},
       (span) =>
         new Promise<number>((resolve) => {
@@ -51,9 +63,9 @@ export class WrapInstructionCommand extends Command {
 
           commandToWrap.on('exit', (exitCode: number) => {
             span?.addTags({
-              error: exitCode === 0 ? 0 : 1,
-              exit_code: exitCode,
-              instruction: this.instruction.join(' '),
+              [ERROR]: exitCode === 0 ? 0 : 1,
+              [EXIT_CODE]: exitCode,
+              [INSTRUCTION]: instruction,
             })
             if (ciMetadata) {
               const {
