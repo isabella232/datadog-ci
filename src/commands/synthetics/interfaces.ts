@@ -1,5 +1,5 @@
-import {ProxyConfiguration} from '../../helpers/utils'
 import {Metadata} from '../../helpers/interfaces'
+import {ProxyConfiguration} from '../../helpers/utils'
 
 interface Timings {
   dns: number

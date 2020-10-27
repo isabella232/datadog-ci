@@ -1,5 +1,5 @@
 import {CI_ENGINES, getCIMetadata} from '../ci'
-import {CI_ENV_TRACE_ID, CI_ENV_PARENT_SPAN_ID} from '../tags'
+import {CI_ENV_PARENT_SPAN_ID, CI_ENV_TRACE_ID} from '../tags'
 
 describe('ci-metadata', () => {
   const branch = 'fakeBranch'
@@ -116,7 +116,7 @@ describe('ci-metadata', () => {
       GIT_COMMIT: commit,
       JENKINS_URL: 'https://fakebuildserver.url/',
       [CI_ENV_PARENT_SPAN_ID]: 'PARENT_SPAN_ID',
-      [CI_ENV_PARENT_SPAN_ID]: 'TRACE_ID',
+      [CI_ENV_TRACE_ID]: 'TRACE_ID',
     }
     expect(getCIMetadata()).toEqual({
       ci: {
