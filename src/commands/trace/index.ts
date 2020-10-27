@@ -1,3 +1,3 @@
-import {WrapInstructionCommand} from './command'
+import {TraceInstructionCommand} from './command'
 
-module.exports = [WrapInstructionCommand]
+module.exports = [TraceInstructionCommand]

@@ -6,7 +6,7 @@ Trace your CI commands.
 
 ### Setup
 
-You need to have the [Datadog Agent](https://docs.datadoghq.com/agent/) running in your environment.
+You need the [Datadog Agent](https://docs.datadoghq.com/agent/) running in your environment.
 
 #### Commands
 

@@ -1,4 +1,3 @@
-/* tslint:disable */
 import {spawn} from 'child_process'
 import {Command} from 'clipanion'
 import tracer from 'dd-trace'
@@ -7,28 +6,28 @@ import {getCIMetadata} from '../../helpers/ci'
 import {
   CI_PIPELINE_URL,
   CI_PROVIDER_NAME,
-  GIT_BRANCH,
-  GIT_SHA,
-  PARENT_SPAN_ID,
-  TRACE_ID,
   ERROR,
   EXIT_CODE,
+  GIT_BRANCH,
+  GIT_SHA,
   INSTRUCTION,
+  PARENT_SPAN_ID,
+  TRACE_ID,
 } from '../../helpers/tags'
 
-export class WrapInstructionCommand extends Command {
+export class TraceInstructionCommand extends Command {
   public static usage = Command.Usage({
     description: 'Trace your CI commands.',
     details: `
             This command will allow you to wrap any instruction and create a span associated to it.
         `,
-    examples: [['Wrap command', 'datadog-ci trace command yarn test']],
+    examples: [['Trace your test command', 'datadog-ci trace command yarn test']],
   })
   private instruction: string[] = []
 
   public async execute() {
     if (!this.instruction.length) {
-      throw new Error('No instruction to wrap')
+      throw new Error('No instruction to trace')
     }
     tracer.init()
 
@@ -55,13 +54,13 @@ export class WrapInstructionCommand extends Command {
         new Promise<number>((resolve) => {
           const [command, ...rest] = this.instruction
 
-          const commandToWrap = spawn(command, rest)
-          process.stdin.pipe(commandToWrap.stdin)
+          const commandToTrace = spawn(command, rest)
+          process.stdin.pipe(commandToTrace.stdin)
 
-          commandToWrap.stdout.pipe(this.context.stdout)
-          commandToWrap.stderr.pipe(this.context.stderr)
+          commandToTrace.stdout.pipe(this.context.stdout)
+          commandToTrace.stderr.pipe(this.context.stderr)
 
-          commandToWrap.on('exit', (exitCode: number) => {
+          commandToTrace.on('exit', (exitCode: number) => {
             span?.addTags({
               [ERROR]: exitCode === 0 ? 0 : 1,
               [EXIT_CODE]: exitCode,
@@ -89,5 +88,5 @@ export class WrapInstructionCommand extends Command {
     )
   }
 }
-WrapInstructionCommand.addPath('trace', 'command')
-WrapInstructionCommand.addOption('instruction', Command.Proxy())
+TraceInstructionCommand.addPath('trace', 'command')
+TraceInstructionCommand.addOption('instruction', Command.Proxy())
