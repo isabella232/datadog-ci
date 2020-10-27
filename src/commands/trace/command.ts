@@ -4,15 +4,7 @@ import {Command} from 'clipanion'
 import tracer from 'dd-trace'
 
 import {getCIMetadata} from '../../helpers/ci'
-import {
-  CI_PIPELINE_URL,
-  CI_PROVIDER_NAME,
-  GIT_BRANCH,
-  GIT_SHA,
-  GIT_REPOSITORY_URL,
-  PARENT_SPAN_ID,
-  TRACE_ID,
-} from '../../helpers/tags'
+import {CI_PIPELINE_URL, CI_PROVIDER_NAME, GIT_BRANCH, GIT_SHA, PARENT_SPAN_ID, TRACE_ID} from '../../helpers/tags'
 
 export class WrapInstructionCommand extends Command {
   public static usage = Command.Usage({
@@ -69,14 +61,13 @@ export class WrapInstructionCommand extends Command {
                   pipeline: {url: pipelineUrl},
                   provider: {name: providerName},
                 },
-                git: {branch, commit_sha, repository},
+                git: {branch, commit_sha},
               } = ciMetadata
               span?.addTags({
                 [CI_PIPELINE_URL]: pipelineUrl,
                 [CI_PROVIDER_NAME]: providerName,
                 [GIT_BRANCH]: branch,
                 [GIT_SHA]: commit_sha,
-                [GIT_REPOSITORY_URL]: repository,
               })
             }
 

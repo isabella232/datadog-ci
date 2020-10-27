@@ -86,7 +86,6 @@ describe('ci-metadata', () => {
       git: {
         branch,
         commit_sha: commit,
-        repository: 'DataDog/datadog-ci',
       },
     })
   })
@@ -96,7 +95,6 @@ describe('ci-metadata', () => {
       BUILD_URL: pipelineURL,
       GIT_BRANCH: branch,
       GIT_COMMIT: commit,
-      GIT_URL: 'git@github.com:DataDog/fake-repo.git',
       JENKINS_URL: 'https://fakebuildserver.url/',
     }
     expect(getCIMetadata()).toEqual({
@@ -107,7 +105,6 @@ describe('ci-metadata', () => {
       git: {
         branch,
         commit_sha: commit,
-        repository: 'git@github.com:DataDog/fake-repo.git',
       },
     })
   })
@@ -117,7 +114,6 @@ describe('ci-metadata', () => {
       BUILD_URL: pipelineURL,
       GIT_BRANCH: branch,
       GIT_COMMIT: commit,
-      GIT_URL: 'git@github.com:DataDog/fake-repo.git',
       JENKINS_URL: 'https://fakebuildserver.url/',
       [CI_ENV_PARENT_SPAN_ID]: 'PARENT_SPAN_ID',
       [CI_ENV_TRACE_ID]: 'TRACE_ID',
@@ -130,7 +126,6 @@ describe('ci-metadata', () => {
       git: {
         branch,
         commit_sha: commit,
-        repository: 'git@github.com:DataDog/fake-repo.git',
       },
       trace: {
         parentSpanId: 'PARENT_SPAN_ID',

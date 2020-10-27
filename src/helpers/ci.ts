@@ -64,9 +64,9 @@ export const getCIMetadata = (): Metadata | undefined => {
   }
 
   if (env.GITHUB_ACTIONS) {
-    const pipelineURL = `https://github.com/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}`
+    const {GITHUB_REF, GITHUB_SHA, GITHUB_REPOSITORY, GITHUB_RUN_ID} = env
 
-    const {GITHUB_REF, GITHUB_SHA, GITHUB_REPOSITORY} = env
+    const pipelineURL = `https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}`
 
     return {
       ci: {
@@ -80,20 +80,12 @@ export const getCIMetadata = (): Metadata | undefined => {
       git: {
         branch: GITHUB_REF,
         commit_sha: GITHUB_SHA,
-        repository: GITHUB_REPOSITORY,
       },
     }
   }
 
   if (env.JENKINS_URL) {
-    const {
-      BUILD_URL,
-      GIT_COMMIT,
-      GIT_BRANCH,
-      GIT_URL,
-      [CI_ENV_TRACE_ID]: traceId,
-      [CI_ENV_PARENT_SPAN_ID]: parentSpanId,
-    } = env
+    const {BUILD_URL, GIT_COMMIT, GIT_BRANCH, [CI_ENV_TRACE_ID]: traceId, [CI_ENV_PARENT_SPAN_ID]: parentSpanId} = env
 
     const commonMetadata = {
       ci: {
@@ -107,7 +99,6 @@ export const getCIMetadata = (): Metadata | undefined => {
       git: {
         branch: GIT_BRANCH,
         commit_sha: GIT_COMMIT,
-        repository: GIT_URL,
       },
     }
 
