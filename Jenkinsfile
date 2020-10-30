@@ -9,7 +9,6 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'yarn'
-                sh 'yarn global add @datadog/datadog-ci'
                 sh 'datadog-ci trace command yarn test'
                 sh 'datadog-ci trace command yarn lint'
                 sh 'datadog-ci trace command yarn prettier-check'
