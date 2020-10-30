@@ -9,12 +9,10 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'yarn'
-                sh 'yarn pack'
-                sh 'node dist/index.js trace command yarn audit --level moderate'
-                sh 'node dist/index.js trace command yarn test'
-                sh 'node dist/index.js trace command yarn lint'
-                sh 'node dist/index.js trace command yarn prettier-check'
-                sh 'node dist/index.js trace command yarn prettier-check && node dist/index.js trace command yarn lint'
+                sh 'yarn global add @datadog/datadog-ci'
+                sh 'datadog-ci trace command yarn test'
+                sh 'datadog-ci trace command yarn lint'
+                sh 'datadog-ci trace command yarn prettier-check'
             }
         }
     }
