@@ -72,13 +72,13 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
     const {repository, branch, commit} = await getGitInformation()
     this.global.tracer = require('dd-trace').init({
       sampleRate: 1,
-      flushInterval: 0.1,
+      flushInterval: 1,
       startupLogs: false,
       debug: true,
       logLevel: 'debug',
       ingestion: {
         sampleRate: 1,
-        rateLimit: 100000,
+        // rateLimit: 100000,
       },
       tags: {
         ...ciMetadata,

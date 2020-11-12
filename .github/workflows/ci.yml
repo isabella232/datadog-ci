@@ -18,9 +18,9 @@ jobs:
           DD_APM_NON_LOCAL_TRAFFIC: true
           DD_APM_MAX_TPS: 0
           DD_APM_MAX_EPS: 0
+          DD_INSIDE_CI: true
         ports:
-          - 8126:8126/tcp
-          - 8125:8125
+          - 8126:8126
 
     steps:
       - uses: actions/checkout@v2
