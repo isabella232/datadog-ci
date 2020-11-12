@@ -70,6 +70,8 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
   async setup() {
     const ciMetadata = getCIMetadata()
     const {repository, branch, commit} = await getGitInformation()
+    console.log('GIT INFO!!', {repository, branch, commit})
+    console.log('METADATA INFO!!', ciMetadata)
     this.global.tracer = require('dd-trace').init({
       sampleRate: 1,
       flushInterval: 1,
