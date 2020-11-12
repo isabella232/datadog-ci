@@ -80,19 +80,21 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
       },
       plugins: false,
       tags: {
-        ...ciMetadata,
         [GIT_COMMIT_SHA]: commit,
         [GIT_BRANCH]: branch,
         [GIT_REPOSITORY_URL]: repository,
         [BUILD_SOURCE_ROOT]: this.rootDir,
         [TEST_FRAMEWORK]: 'jest',
+        ...ciMetadata,
       },
     })
     await super.setup()
   }
   async teardown() {
-    this.global.tracer._tracer._exporter._writer.flush()
-    super.teardown()
+    await new Promise((resolve) => {
+      this.global.tracer._tracer._exporter._writer.flush(resolve)
+    })
+    return super.teardown()
   }
 
   async handleTestEvent(event) {
