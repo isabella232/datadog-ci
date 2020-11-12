@@ -73,19 +73,19 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
     this.global.tracer = require('dd-trace').init({
       sampleRate: 1,
       flushInterval: 1,
-      // startupLogs: false,
+      startupLogs: false,
       ingestion: {
         sampleRate: 1,
         rateLimit: 100000,
       },
       plugins: false,
       tags: {
+        ...ciMetadata,
         [GIT_COMMIT_SHA]: commit,
         [GIT_BRANCH]: branch,
         [GIT_REPOSITORY_URL]: repository,
         [BUILD_SOURCE_ROOT]: this.rootDir,
         [TEST_FRAMEWORK]: 'jest',
-        ...ciMetadata,
       },
     })
     await super.setup()
