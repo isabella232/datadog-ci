@@ -82,12 +82,12 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
       },
       plugins: false,
       tags: {
+        ...ciMetadata,
         [GIT_COMMIT_SHA]: commit,
         [GIT_BRANCH]: branch,
         [GIT_REPOSITORY_URL]: repository,
         [BUILD_SOURCE_ROOT]: this.rootDir,
         [TEST_FRAMEWORK]: 'jest',
-        ...ciMetadata,
       },
     })
     await super.setup()
@@ -170,13 +170,6 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
               })
             try {
               result = originalSpecFunction()
-              this.global.tracer.scope().active().setTag(TEST_STATUS, 'pass')
-              this.global.tracer
-                .scope()
-                .active()
-                ._spanContext._trace.started.forEach((span) => {
-                  span.finish()
-                })
             } catch (error) {
               this.global.tracer.scope().active().setTag(TEST_STATUS, 'fail')
               throw error
@@ -200,6 +193,7 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
                     })
                 })
             }
+            this.global.tracer.scope().active().setTag(TEST_STATUS, 'pass')
             this.global.tracer
               .scope()
               .active()
