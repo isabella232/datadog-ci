@@ -74,6 +74,8 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
       sampleRate: 1,
       flushInterval: 0.1,
       startupLogs: false,
+      debug: true,
+      logLevel: 'debug',
       ingestion: {
         sampleRate: 1,
         rateLimit: 100000,
