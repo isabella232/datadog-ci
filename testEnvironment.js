@@ -72,7 +72,7 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
     const {repository, branch, commit} = await getGitInformation()
     this.global.tracer = require('dd-trace').init({
       sampleRate: 1,
-      flushInterval: 1,
+      flushInterval: 0,
       startupLogs: false,
       ingestion: {
         sampleRate: 1,
@@ -88,7 +88,7 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
         [TEST_FRAMEWORK]: 'jest',
       },
     })
-    await super.setup()
+    return super.setup()
   }
   async teardown() {
     await new Promise((resolve) => {
