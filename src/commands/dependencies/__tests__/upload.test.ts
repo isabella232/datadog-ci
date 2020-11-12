@@ -271,7 +271,7 @@ describe('execute', () => {
     const stdout = context.stdout.toString()
     const stderr = context.stderr.toString()
 
-    expect(stderr).toEqual('ForbiddenS')
+    expect(stderr).toEqual('Forbidden')
     expect(stdout).toContain(
       'Failed upload dependencies: Forbidden. Check DATADOG_API_KEY and DATADOG_APP_KEY environment variables.'
     )
