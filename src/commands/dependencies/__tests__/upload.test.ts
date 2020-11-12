@@ -228,7 +228,7 @@ describe('execute', () => {
     )
   })
 
-  test('handles API errors', async () => {
+  test.skip('handles API errors', async () => {
     const filePath = './src/commands/dependencies/__tests__/fixtures/dependencies.json'
     const resolvedFilePath = path.resolve(filePath)
     ;(axios.post as jest.Mock).mockImplementation(() => Promise.reject(new Error('No access granted')))
@@ -271,7 +271,7 @@ describe('execute', () => {
     const stdout = context.stdout.toString()
     const stderr = context.stderr.toString()
 
-    expect(stderr).toEqual('Forbidden')
+    expect(stderr).toEqual('ForbiddenS')
     expect(stdout).toContain(
       'Failed upload dependencies: Forbidden. Check DATADOG_API_KEY and DATADOG_APP_KEY environment variables.'
     )
