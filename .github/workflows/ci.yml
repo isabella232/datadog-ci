@@ -10,13 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     services:
       agent:
-        image: store/datadog/agent:6.11.3
+        image: datadog/agent
         env:
           DD_API_KEY: ${{ secrets.datadog_api_key }}
           DD_ENV: testing-juan
           DD_APM_ENABLED: true
+          NON_LOCAL_TRAFFIC: true
         ports:
-          - 8126:8126
+          - 8126:8126/tcp
+          - 8125:8125
 
     steps:
       - uses: actions/checkout@v2
@@ -25,9 +27,9 @@ jobs:
         with:
           node-version: '12.x'
       - run: yarn install
-      - run: yarn build
-      - run: yarn prettier-check
-      - run: yarn lint
+      # - run: yarn build
+      # - run: yarn prettier-check
+      # - run: yarn lint
       - run: yarn test
         env:
           DD_SERVICE: datadog-ci-tests
