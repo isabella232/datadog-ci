@@ -45,7 +45,7 @@ async function getGitInformation() {
   try {
     const [{stdout: readRepository}, {stdout: readBranch}, {stdout: readCommit}] = await Promise.all([
       asyncExec('git ls-remote --get-url'),
-      asyncExec('git rev-parse --abbrev-ref HEAD'),
+      asyncExec('git branch --show-current'),
       asyncExec('git rev-parse HEAD'),
     ])
     return {
@@ -70,8 +70,6 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
   async setup() {
     const ciMetadata = getCIMetadata()
     const {repository, branch, commit} = await getGitInformation()
-    console.log('GIT INFO!!', {repository, branch, commit})
-    console.log('METADATA INFO!!', ciMetadata)
     this.global.tracer = require('dd-trace').init({
       sampleRate: 1,
       flushInterval: 1,
