@@ -16,6 +16,8 @@ jobs:
           DD_ENV: testing-juan
           DD_APM_ENABLED: true
           DD_APM_NON_LOCAL_TRAFFIC: true
+          DD_APM_MAX_TPS: 0
+          DD_APM_MAX_EPS: 0
         ports:
           - 8126:8126/tcp
           - 8125:8125
