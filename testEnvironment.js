@@ -73,7 +73,7 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
     this.global.tracer = require('dd-trace').init({
       sampleRate: 1,
       flushInterval: 1,
-      startupLogs: false,
+      // startupLogs: false,
       ingestion: {
         sampleRate: 1,
         rateLimit: 100000,
