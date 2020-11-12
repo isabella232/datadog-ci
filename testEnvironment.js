@@ -91,11 +91,7 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
   }
   async teardown() {
     await new Promise((resolve) => {
-      this.global.tracer._tracer._exporter._writer.flush(() => {
-        setTimeout(() => {
-          resolve()
-        }, 1000)
-      })
+      this.global.tracer._tracer._exporter._writer.flush(resolve)
     })
     await super.teardown()
   }
