@@ -228,7 +228,7 @@ describe('execute', () => {
     )
   })
 
-  test.skip('handles API errors', async () => {
+  test('handles API errors', async () => {
     const filePath = './src/commands/dependencies/__tests__/fixtures/dependencies.json'
     const resolvedFilePath = path.resolve(filePath)
     ;(axios.post as jest.Mock).mockImplementation(() => Promise.reject(new Error('No access granted')))
