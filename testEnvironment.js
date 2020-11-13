@@ -64,50 +64,50 @@ async function getGitInformation() {
 module.exports = class DatadogJestEnvironment extends NodeEnvironment {
   constructor(config, context) {
     super(config, context)
-    this.filePath = context.testPath.replace(`${config.rootDir}/`, '')
+    this.testSuite = context.testPath.replace(`${config.rootDir}/`, '')
     this.rootDir = config.rootDir
   }
   async setup() {
-    const ciMetadata = getCIMetadata()
-    const {repository, branch, commit} = await getGitInformation()
-    this.global.tracer = require('dd-trace').init({
-      sampleRate: 1,
-      flushInterval: 1,
-      startupLogs: false,
-      debug: true,
-      logLevel: 'debug',
-      ingestion: {
+    if (!global.tracer) {
+      const ciMetadata = getCIMetadata()
+      const {repository, branch, commit} = await getGitInformation()
+      global.tracer = require('dd-trace').init({
         sampleRate: 1,
-        // rateLimit: 100000,
-      },
-      tags: {
-        ...ciMetadata,
-        [GIT_COMMIT_SHA]: commit,
-        [GIT_BRANCH]: branch,
-        [GIT_REPOSITORY_URL]: repository,
-        [BUILD_SOURCE_ROOT]: this.rootDir,
-        [TEST_FRAMEWORK]: 'jest',
-      },
-    })
-    await super.setup()
+        flushInterval: 1,
+        startupLogs: false,
+        ingestion: {
+          sampleRate: 1,
+        },
+        tags: {
+          ...ciMetadata,
+          [GIT_COMMIT_SHA]: commit,
+          [GIT_BRANCH]: process.env.TESTING_BRANCH,
+          [GIT_REPOSITORY_URL]: repository,
+          [BUILD_SOURCE_ROOT]: this.rootDir,
+          [TEST_FRAMEWORK]: 'jest',
+        },
+      })
+    }
+
+    return super.setup()
   }
   async teardown() {
     await new Promise((resolve) => {
-      this.global.tracer._tracer._exporter._writer.flush(resolve)
+      global.tracer._tracer._exporter._writer.flush(resolve)
     })
-    await super.teardown()
+    return super.teardown()
   }
 
   async handleTestEvent(event) {
     if (event.name === 'test_skip' || event.name === 'test_todo') {
-      this.global.tracer.trace(
+      global.tracer.trace(
         'jest.test',
         {type: 'test', resource: `${event.test.parent.name}.${event.test.name}`},
         (span) => {
           span.addTags({
             [TEST_TYPE]: 'test',
             [TEST_NAME]: event.test.name,
-            [TEST_SUITE]: this.filePath,
+            [TEST_SUITE]: this.testSuite,
             [TEST_STATUS]: 'skip',
           })
         }
@@ -116,23 +116,23 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
     if (event.name === 'test_start') {
       const originalSpecFunction = event.test.fn
       if (originalSpecFunction.length) {
-        event.test.fn = this.global.tracer.wrap(
+        event.test.fn = global.tracer.wrap(
           'jest.test',
           {type: 'test', resource: `${event.test.parent.name}.${event.test.name}`},
           () => {
-            this.global.tracer
+            global.tracer
               .scope()
               .active()
               .addTags({
                 [TEST_TYPE]: 'test',
                 [TEST_NAME]: event.test.name,
-                [TEST_SUITE]: this.filePath,
+                [TEST_SUITE]: this.testSuite,
               })
             return new Promise((resolve, reject) => {
               originalSpecFunction((err) => {
                 if (err) {
-                  this.global.tracer.scope().active().setTag(TEST_STATUS, 'fail')
-                  this.global.tracer
+                  global.tracer.scope().active().setTag(TEST_STATUS, 'fail')
+                  global.tracer
                     .scope()
                     .active()
                     ._spanContext._trace.started.forEach((span) => {
@@ -140,8 +140,8 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
                     })
                   reject(err)
                 } else {
-                  this.global.tracer.scope().active().setTag(TEST_STATUS, 'pass')
-                  this.global.tracer
+                  global.tracer.scope().active().setTag(TEST_STATUS, 'pass')
+                  global.tracer
                     .scope()
                     .active()
                     ._spanContext._trace.started.forEach((span) => {
@@ -154,24 +154,24 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
           }
         )
       } else {
-        event.test.fn = this.global.tracer.wrap(
+        event.test.fn = global.tracer.wrap(
           'jest.test',
           {type: 'test', resource: `${event.test.parent.name}.${event.test.name}`},
           () => {
             let result
-            this.global.tracer
+            global.tracer
               .scope()
               .active()
               .addTags({
                 [TEST_TYPE]: 'test',
                 [TEST_NAME]: event.test.name,
-                [TEST_SUITE]: this.filePath,
+                [TEST_SUITE]: this.testSuite,
               })
             try {
               result = originalSpecFunction()
             } catch (error) {
-              this.global.tracer.scope().active().setTag(TEST_STATUS, 'fail')
-              this.global.tracer
+              global.tracer.scope().active().setTag(TEST_STATUS, 'fail')
+              global.tracer
                 .scope()
                 .active()
                 ._spanContext._trace.started.forEach((span) => {
@@ -183,14 +183,14 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
             if (result && result.then) {
               return result
                 .then(() => {
-                  this.global.tracer.scope().active().setTag(TEST_STATUS, 'pass')
+                  global.tracer.scope().active().setTag(TEST_STATUS, 'pass')
                 })
                 .catch((err) => {
-                  this.global.tracer.scope().active().setTag(TEST_STATUS, 'fail')
+                  global.tracer.scope().active().setTag(TEST_STATUS, 'fail')
                   throw err
                 })
                 .finally(() => {
-                  this.global.tracer
+                  global.tracer
                     .scope()
                     .active()
                     ._spanContext._trace.started.forEach((span) => {
@@ -198,8 +198,8 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
                     })
                 })
             }
-            this.global.tracer.scope().active().setTag(TEST_STATUS, 'pass')
-            this.global.tracer
+            global.tracer.scope().active().setTag(TEST_STATUS, 'pass')
+            global.tracer
               .scope()
               .active()
               ._spanContext._trace.started.forEach((span) => {
