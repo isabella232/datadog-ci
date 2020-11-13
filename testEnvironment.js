@@ -81,7 +81,7 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
         tags: {
           ...ciMetadata,
           [GIT_COMMIT_SHA]: commit,
-          [GIT_BRANCH]: process.env.TESTING_BRANCH,
+          [GIT_BRANCH]: branch,
           [GIT_REPOSITORY_URL]: repository,
           [BUILD_SOURCE_ROOT]: this.rootDir,
           [TEST_FRAMEWORK]: 'jest',
