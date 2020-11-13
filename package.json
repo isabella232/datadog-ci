@@ -27,7 +27,7 @@
     "prepack": "yarn build && node ./bin/make-it-executable.js",
     "prettier-check": "prettier --check \"src/**/*.{ts,js,json,yml}\" --ignore-path .gitignore || (echo \"\nYou can fix this by running ==> yarn prettier-write <==\n\" && false)",
     "prettier-write": "prettier --write \"src/**/*.{ts,js,json,yml}\" --ignore-path .gitignore",
-    "test": "jest --runInBand",
+    "test": "jest",
     "test:debug": "node --inspect-brk `which jest`",
     "typecheck": "bash bin/typecheck.sh",
     "watch": "tsc -w"
