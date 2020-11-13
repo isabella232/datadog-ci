@@ -132,23 +132,17 @@ module.exports = class DatadogJestEnvironment extends NodeEnvironment {
               originalSpecFunction((err) => {
                 if (err) {
                   global.tracer.scope().active().setTag(TEST_STATUS, 'fail')
-                  global.tracer
-                    .scope()
-                    .active()
-                    ._spanContext._trace.started.forEach((span) => {
-                      span.finish()
-                    })
                   reject(err)
                 } else {
                   global.tracer.scope().active().setTag(TEST_STATUS, 'pass')
-                  global.tracer
-                    .scope()
-                    .active()
-                    ._spanContext._trace.started.forEach((span) => {
-                      span.finish()
-                    })
                   resolve()
                 }
+                global.tracer
+                  .scope()
+                  .active()
+                  ._spanContext._trace.started.forEach((span) => {
+                    span.finish()
+                  })
               })
             })
           }
